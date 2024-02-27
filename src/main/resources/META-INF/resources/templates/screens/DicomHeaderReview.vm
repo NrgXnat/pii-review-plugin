@@ -1,0 +1,56 @@
+##Copyright 2016 Radiologics, Inc
+##Developer: James Dickson james@radiologics.com
+
+#set($user=$data.getSession().getAttribute("user"))
+#if($user.checkFeature($om,"PIIReview"))
+    #set($scanType = "dicom")
+    #foreach($scan in $om.getSortedScans())
+        #if($scan.getParameters_ecatcalibrationfactor())
+            #set($scanType = "ecat")
+        #end
+    #end
+
+    #if($isUpload)   
+        <script type="text/javascript" src="$content.getURI("scripts/PII/PersonallyIdentifiableInformationManager.js")"></script>
+        <div class="edit_header1">Personally Identifiable Information Review</div>
+            <div class="yui-skin-sam">
+                <br>
+                <div>
+                    I have reviewed the DICOM images and header fields and did NOT find any personally identifiable information:  
+                    <input type="checkbox" id="checkboxphi" name="checkboxphi" value="check" onclick="return false;" onkeydown="return false;" /> &nbsp; <input id="reviewPhi" type="button" ONCLICK="window.PIIManager.showPage1();" value="Review"/>
+                </div>
+                <br><br>
+                <div id="dicom_summary_page1"></div>
+                <div id="dicom_summary_page2"></div>
+                <div id="dicom_summary_page3"></div>
+                <div id="pdf_summary"></div>
+                <div id="pdf_report"></div>
+            </div>
+            <hr>
+                
+                
+        <script>
+            var myForm=YUIDOM.get("form1");
+            var phiConfirm={form:myForm,validate:function(){ 
+                var reviewPhi=document.getElementById("reviewPhi");
+                if(jQuery('input[type=checkbox]#checkboxphi').prop('checked') != true){
+                    appendIcon(reviewPhi,"fa-asterisk","Please confirm data is free of PHI",{ color: '#c66' });
+                    alert("Please confirm data is complete and accurate.");
+                    return false;
+                }else{
+                    removeAppendedIcon(reviewPhi);
+                    return true;
+                }
+            }};
+        
+            YAHOO.util.Event.onDOMReady(function(){
+                _addFormValidation(phiConfirm);
+                
+                if (window.PIIManager == undefined) {
+                    window.PIIManager = new PersonallyIdentifiableInformationManager('$src',"$scanType", $om.getResources_resource().size() > 0);
+                }
+                window.PIIManager.showPage1();
+            });
+        </script>
+    #end
+#end
