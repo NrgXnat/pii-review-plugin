@@ -8,7 +8,7 @@
 import org.gradle.internal.jvm.Jvm
 
 group 'com.radiologics'
-version '1.0.0'
+version '1.2.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
@@ -19,7 +19,7 @@ apply plugin: 'net.linguica.maven-settings'
 
 buildscript {
     ext {
-        vXnat     = "1.8.4"
+        vXnat     = "1.9.0-RC-SNAPSHOT"
     }
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -90,10 +90,9 @@ publishing {
     }
     repositories{ 
         maven {
-            name "Radiologics"
-            def releasesRepoUrl =  "https://maven.dev.radiologics.com/repository/internal/"
-            def snapshotsRepoUrl = "https://maven.dev.radiologics.com/repository/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl            
+            url "https://nrgxnat.jfrog.io/nrgxnat/libs-${project.version.endsWith("-SNAPSHOT") ? "snapshot" : "release"}"
+            // The value for name must match <id> in ~/.m2/settings.xml
+            name = "XNAT_Artifactory"        
         }
     }
 }
