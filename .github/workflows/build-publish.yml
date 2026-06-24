@@ -7,7 +7,7 @@ name: Build and Publish
 on:
   push:
     branches:
-      - master
+      - main
       - develop
       - 'releases/*'   # RC / release branches, e.g. releases/1.6.0-rc
   workflow_dispatch:
